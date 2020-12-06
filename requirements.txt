@@ -1,0 +1,5 @@
+numpy
+imageai
+keras
+https://storage.googleapis.com/tensorflow/windows/cpu/tensorflow_cpu-2.3.0-cp38-cp38-win_amd64.whl
+opencv-python
