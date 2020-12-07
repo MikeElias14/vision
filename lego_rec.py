@@ -120,15 +120,15 @@ else:
         print("No objects detected")
         # FYI: code below will most likely error out as it tries to iterate on an array
 
-# it might be possible we have more than 1 validcontour, iterating through them here
+# it might be possible we have more than 1 valid contour, iterating through them here
 # if there is zero contours, this most likely will error out
 for i in validcontours:
     cv2.drawContours(img_withcontours, arr_cnt, validcontours[i], (0, 255, 0), 3)
     previewImg('Contours', img_withcontours)
 
 # Display a Bounding Rectangle
-img_withrectangle=img_example.copy()
+img_with_rectangle = img_example.copy()
 for i in validcontours:
     x, y, w, h = cv2.boundingRect(arr_cnt[i])
-    cv2.rectangle(img_withrectangle, (x, y), (x+w, y+h), (0, 255, 0), 2)
-    previewImg('Bounding Rectangle', img_withrectangle)
+    cv2.rectangle(img_with_rectangle, (x, y), (x + w, y + h), (0, 255, 0), 2)
+    previewImg('Bounding Rectangle', img_with_rectangle)
