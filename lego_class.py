@@ -10,6 +10,9 @@ from PIL import Image, ImageOps
 
 import glob, os, random
 
+# Use GPU
+os.environ["KERAS_BACKEND"] = "plaidml.keras.backend"
+
 base_path = '../lego_dataset/cropped images/'
 
 img_list = glob.glob(os.path.join(base_path, '*/*.jpg'))
