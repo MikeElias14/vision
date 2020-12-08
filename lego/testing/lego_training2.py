@@ -7,7 +7,7 @@ import matplotlib.pyplot as plt
 import keras
 import os
 
-PATH = "../lego_dataset/lego_dataset_large/dataset/"
+PATH = "../../../lego_dataset/lego_dataset_large/dataset/"
 
 # first = plt.imread(PATH + "2357 brick corner 1x2x2 000L.png")
 # print(first.dtype)

@@ -8,7 +8,7 @@ import glob, os, random
 model = load_model('./model')
 
 
-base_path = '..\\lego_dataset\\cropped images\\'
+base_path = '../../../lego_dataset/Cropped Images\\'
 
 img_list = glob.glob(os.path.join(base_path, '*\\*.jpg'))
 

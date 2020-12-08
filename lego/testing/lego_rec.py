@@ -21,10 +21,10 @@ def previewImg(text, img_preview, grayscale=False):
 
 
 # load the example.  It is a white piece, the most difficult to detect!
-img_example = cv2.imread('../lego_dataset/example_2_Base Image.jpg')
+img_example = cv2.imread('../../../lego_dataset/example_2_Base Image.jpg')
 
 # load a background, so we can extract it and make it easy to detect the object.
-img_bg = cv2.imread('../lego_dataset/background_backlit_A.jpg')
+img_bg = cv2.imread('../../../lego_dataset/background_backlit_A.jpg')
 
 # our starting Point
 previewImg('Background Image', img_bg)
