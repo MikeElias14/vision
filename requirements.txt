@@ -1,6 +1,7 @@
 numpy
 imageai
 matplotlib
+pandas
 keras
 tensorflow
 opencv-python

@@ -6,6 +6,8 @@ from keras.preprocessing.image import ImageDataGenerator, load_img, img_to_array
 from keras.layers import Input, Conv2D, Flatten, MaxPooling2D, Dense, BatchNormalization, DepthwiseConv2D, LeakyReLU, Add, GlobalMaxPooling2D
 from keras.models import Model
 from skimage.transform import resize
+import keras
+import cv2
 from PIL import Image, ImageOps
 
 import glob, os, random
@@ -18,6 +20,13 @@ base_path = '..\\lego_dataset\\cropped images\\'
 img_list = glob.glob(os.path.join(base_path, '*\\*.*'))
 
 print(f"Number training images: {len(img_list)}")
+
+# first = plt.imread(img_list[0])
+# print(img_list[0])
+# print(first.dtype)
+# print(first.shape)
+# plt.imshow(first)
+# plt.show()
 
 
 def resize_pad(img):
@@ -32,6 +41,7 @@ def resize_pad(img):
     padding = ((delta_h // 2, delta_h - (delta_h // 2)), (delta_w // 2, delta_w - (delta_w // 2)), (0, 0))
 
     img = np.pad(img, padding, 'edge')
+    # img_grey = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
 
     return img
 
@@ -61,7 +71,7 @@ test_datagen = ImageDataGenerator(
 
 train_generator = train_datagen.flow_from_directory(
     base_path,
-    color_mode='grayscale',
+    color_mode='rgb',
     target_size=(200, 200),
     subset='training',
     seed=0
@@ -69,7 +79,7 @@ train_generator = train_datagen.flow_from_directory(
 
 validation_generator = test_datagen.flow_from_directory(
     base_path,
-    color_mode='grayscale',
+    color_mode='rgb',
     target_size=(200, 200),
     subset='validation',
     seed=0
@@ -80,63 +90,36 @@ labels = train_generator.class_indices
 labels = dict((v, k) for k, v in labels.items())
 print(labels)
 
-# inputs
-inputs = Input(shape=(200, 200, 1))
 
-# Define the network
-net = Conv2D(filters=64, kernel_size=3, padding='same')(inputs)
-net = LeakyReLU()(net)
-net = MaxPooling2D()(net)
+# Import a Xception Model
+base_model = keras.applications.xception.Xception(weights="imagenet", include_top=False)
 
-net = Conv2D(filters=64, kernel_size=3, padding='same')(net)
-net = LeakyReLU()(net)
-net = MaxPooling2D()(net)
+# Create a Average Pooling after the CNN layers
+avg = keras.layers.GlobalAveragePooling2D()(base_model.output)
 
-net = Conv2D(filters=64, kernel_size=3, padding='same')(net)
-net = LeakyReLU()(net)
-net = MaxPooling2D()(net)
+# Create a top Dense Layer
+output = keras.layers.Dense(len(list(labels.keys())), activation="softmax")(avg)
+model = keras.models.Model(inputs=base_model.input, outputs=output)
 
-shortcut = net
+# Train all layers in the model including pre-trained
+for layer in base_model.layers:
+    layer.trainable = True
 
-net = DepthwiseConv2D(kernel_size=3, padding='same')(net)
-net = LeakyReLU()(net)
+# We set the optimizer to a Nesterov, good convergence quality, I haven't tested Nadam or RMSProp,
+# the training is slow with the input size
+optimizer = keras.optimizers.SGD(lr=0.01, momentum=0.9, nesterov=True, decay=0.001)
 
-net = Conv2D(filters=64, kernel_size=1, padding='same')(net)
-net = LeakyReLU()(net)
-
-net = DepthwiseConv2D(kernel_size=3, padding='same')(net)
-net = LeakyReLU()(net)
-
-net = Conv2D(filters=64, kernel_size=1, padding='same')(net)
-net = LeakyReLU()(net)
-
-net = Add()([shortcut, net])
-
-net = Conv2D(filters=64, kernel_size=3, padding='same')(net)
-net = LeakyReLU()(net)
-net = MaxPooling2D()(net)
-
-net = Conv2D(filters=64, kernel_size=3, padding='same')(net)
-net = LeakyReLU()(net)
-net = MaxPooling2D()(net)
-
-net = DepthwiseConv2D(kernel_size=3, padding='same')(net)
-net = LeakyReLU()(net)
-
-net = Conv2D(filters=128, kernel_size=1, padding='same')(net)
-net = LeakyReLU()(net)
-
-net = Flatten()(net)
-
-net = Dense(128, activation='relu')(net)
-net = Dense(64, activation='relu')(net)
-
-outputs = Dense(46, activation='softmax')(net)
-
-model = Model(inputs=inputs, outputs=outputs)
-model.compile(loss='categorical_crossentropy', optimizer='adam', metrics=['acc'])
-model.summary()
+# We use accuracy and crossentropy to have distinct classes
+model.compile(loss="sparse_categorical_crossentropy", optimizer=optimizer,
+              metrics=["accuracy"])
 
 # train the model
-model.fit_generator(train_generator, epochs=33, validation_data=validation_generator, verbose=2)
+# Steps = number of batches per epoch
+history = model.fit_generator(
+    train_generator,
+    steps_per_epoch=int(32000/8),
+    validation_data=validation_generator,
+    validation_steps=int(3200/8),
+    epochs=5
+)
 model.save('./model')
