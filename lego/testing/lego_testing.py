@@ -2,15 +2,17 @@ from keras.models import load_model
 from keras.preprocessing.image import ImageDataGenerator
 import numpy as np
 from skimage.transform import resize
+import matplotlib.pyplot as plt
 import glob, os, random
+import cv2
 
 
-model = load_model('./model')
+model = load_model('../models/model-80')
 
 
-base_path = '../../../lego_dataset/Cropped Images\\'
+base_path = '../../../lego_dataset_orig/Cropped Images/'
 
-img_list = glob.glob(os.path.join(base_path, '*\\*.jpg'))
+img_list = glob.glob(os.path.join(base_path, '*/*.jpg'))
 
 
 def resize_pad(img):
@@ -25,13 +27,12 @@ def resize_pad(img):
     padding = ((delta_h // 2, delta_h - (delta_h // 2)), (delta_w // 2, delta_w - (delta_w // 2)), (0, 0))
 
     img = np.pad(img, padding, 'edge')
+    plt.imshow(cv2.cvtColor(img, cv2.COLOR_GRAY2RGB))
+    plt.show()
 
+    plt.imshow(cv2.cvtColor(img, cv2.COLOR_BGR2RGB))
+    plt.show()
     return img
-
-
-def preprocessing_train(x):
-    x = resize_pad(x)
-    return x
 
 
 def preprocessing_val(x):

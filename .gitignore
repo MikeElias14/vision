@@ -26,6 +26,8 @@ share/python-wheels/
 .installed.cfg
 *.egg
 MANIFEST
+./lego/models
+lego/models
 
 # PyInstaller
 #  Usually these files are written by a python script from a template

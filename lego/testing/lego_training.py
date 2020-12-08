@@ -13,9 +13,9 @@ import glob, os, random
 # Use GPU
 os.environ["KERAS_BACKEND"] = "plaidml.keras.backend"
 
-base_path = '../../../lego_dataset/Cropped Images\\'
+base_path = '../../../lego_dataset_orig/Cropped Images/'
 
-img_list = glob.glob(os.path.join(base_path, '*\\*.*'))
+img_list = glob.glob(os.path.join(base_path, '*/*.*'))
 
 print(f"Number training images: {len(img_list)}")
 
