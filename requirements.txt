@@ -5,3 +5,4 @@ keras
 tensorflow
 opencv-python
 scikit-image
+plaidml-keras
