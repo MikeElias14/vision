@@ -1,4 +1,4 @@
-classes = {
+classes_CNN95 = {
     0:  '41677 - Lever 2M',
     1: '6143 - Brick D16 w Cross',
     2: '27925 - 2x2 Flat Round',
@@ -50,3 +50,51 @@ classes = {
     48: '3700 - 1x2 Brick Technic',
     49: '3001 - 2x4 Brick'
 }
+
+classes_model80 = {
+    0: 'Brick_1x1',
+    1: 'Brick_1x2',
+    2: 'Brick_1x3',
+    3: 'Brick_1x4',
+    4: 'Brick_2x2',
+    5: 'Brick_2x2_L',
+    6: 'Brick_2x2_Slope',
+    7: 'Brick_2x3',
+    8: 'Brick_2x4',
+    9: 'Plate_1x1',
+    10: 'Plate_1x1_Round',
+    11: 'Plate_1x1_Slope',
+    12: 'Plate_1x2',
+    13: 'Plate_1x2_Grill',
+    14: 'Plate_1x3',
+    15: 'Plate_1x4',
+    16: 'Plate_2x2',
+    17: 'Plate_2x2_L',
+    18: 'Plate_2x3',
+    19: 'Plate_2x4'
+}
+
+
+classes_CNN_Small = {
+    0: "Plate_1x1",
+    1: "Brick_1x3",
+    2: "Plate_2x3",
+    3: "Brick_2x4",
+    4: "Plate_1x1_Slope",
+    5: 'Brick_2x2_L',
+    6: "Brick_2x3",
+    7: "Plate_2x2",
+    8: "Plate_1x4",
+    9: "Plate_1x3",
+    10: "Plate_2x2_L",
+    11: "Plate_2x4",
+    12: "Brick_2x2",
+    13: "Plate_1x2_Grill",
+    14: "Brick_1x2",
+    15: "Brick_1x1",
+    16: "Plate_1x1_Round",
+    17: "Brick_2x2_Slope",
+    18: "Brick_1x4",
+    19: "Plate_1x2"
+}
+

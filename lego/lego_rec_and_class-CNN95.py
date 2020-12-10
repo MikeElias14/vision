@@ -6,7 +6,7 @@ from tensorflow import keras
 from skimage.transform import resize
 import numpy as np
 import matplotlib.pyplot as plt
-from classes_CNN95 import classes
+import classes
 import os, glob
 import random
 
@@ -109,6 +109,7 @@ def crop_image(img, img_bg):
         delta_y = int((1000-h)/2)
         delta_x = int((1000-w)/2)
         cropped_image = cv2.cvtColor(img_masked[y-delta_y:y+h+delta_y, x-delta_x:x+w+delta_x], cv2.COLOR_GRAY2RGB)
+        cropped_image = img[y-delta_y:y+h+delta_y, x-delta_x:x+w+delta_x]
         # cropped_image = img_masked[y-delta_y:y+h+delta_y, x-delta_x:x+w+delta_x]
         imgs_rects.append([cropped_image, [x, y, x+w, y+h]])
     return imgs_rects
@@ -127,16 +128,14 @@ def draw_class(img, class_rect: dict, target_img):
 
 def main():
     # Load image
-    base_path = '../../lego_dataset/my_images/'
-    img_list = glob.glob(os.path.join(base_path, '*'))
-    # img_path = img_list[random.randrange(len(img_list))]
-    # img_path = '../../lego_dataset/my_images/PXL_20201209_175143762.jpg'
-    # img_path = '../../lego_dataset/my_images/PXL_20201209_175130757.jpg'
-    # img_path = '../../lego_dataset/my_images/PXL_20201209_184337353.jpg'
     img_path = '../../lego_dataset/my_images/assort_grey.jpg'
 
     # Load model
     model = load_model('./models/lego_CNN_95.h5')
+    model = load_model('./models/lego_CNN_small.h5')
+    # model = load_model('./models/model-80')
+
+    classifications = classes.classes_CNN_Small
 
     img_bg = cv2.imread('../../lego_dataset/my_images/background.jpg')
     img_orig = cv2.imread(img_path)
@@ -146,8 +145,9 @@ def main():
     # define the target brick
     # target = '3020 - 2x4 Plate'
     # target = '3003 - 2x2 Brick'
-    target = '3001 - 2x4 Brick'
-    target_key = list(classes.keys())[list(classes.values()).index(target)]
+    # target = '3001 - 2x4 Brick'
+    target = 'Brick_2x2'
+    target_key = list(classifications.keys())[list(classifications.values()).index(target)]
     target_img = []
     target_confidence = 0
 
@@ -157,16 +157,17 @@ def main():
     # data of form [img, [x,y,x1,x2]]
     for img_rect in imgs_rects:
         img = tf.image.convert_image_dtype(img_rect[0], tf.float32)
-        img_resized = tf.image.resize(img, [400, 400])
-        img_expanded = np.expand_dims(img_resized, axis=0)
-        imgs_to_predict.append(img_expanded)
+        img_resized = tf.image.resize(img, [224, 224]).numpy()
+
+        imgs_to_predict.append(img_resized)
         rects.append(img_rect[1])
 
     # Get prediction
-    predictions = model.predict(np.array(imgs_to_predict))
+    imgs_to_predict = np.array(imgs_to_predict)
+    predictions = model.predict(imgs_to_predict)
 
     for score in predictions:
-        classification = classes.get(np.argmax(score))
+        classification = classifications.get(np.argmax(score))
         confidence = round(np.max(score) * 100, 2)
 
         # Human readable prediction and assign rect
