@@ -75,9 +75,6 @@ def crop_image(img, img_bg):
         delta_x = 0
         try:
             cropped_image = img_copy[y-delta_y:y+h+delta_y, x-delta_x:x+w+delta_x]
-            if cropped_image.shape[0] == 0 or cropped_image.shape[1] == 0:
-                print("weird shape thing")
-                break
             imgs_rects.append([cropped_image, [x, y, x+w, y+h]])
         except Exception as e:
             print("Edge case")
@@ -137,10 +134,8 @@ def main():
         if len(imgs_to_predict) != 0:
 
             print(f"predicting {len(imgs_to_predict)} images")
-
             imgs_to_predict = np.array(imgs_to_predict)
             predictions = model.predict(imgs_to_predict)
-            print(len(predictions))
 
             for score in predictions:
                 classification = classifications.get(np.argmax(score))
