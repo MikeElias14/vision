@@ -103,7 +103,8 @@ def main():
 
     # define the target brick
     target = "Brick_2x2"
-    target_key = list(classifications.keys())[list(classifications.values()).index(target)]
+    # target_key = list(classifications.keys())[list(classifications.values()).index(target)]
+    target_key = list(classifications.keys())[7]
 
     url = 'http://192.168.0.114:8080/shot.jpg'
 
